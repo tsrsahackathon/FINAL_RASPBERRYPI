@@ -1,10 +1,11 @@
 
 import nltk
+nltk.download("punkt")
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer
 
-with open('PUNC_transcript.txt','w') as fb:
+with open('PUNC_transcript.txt','r') as fb:
     texts = fb.read()
 
 text = texts
@@ -24,7 +25,5 @@ if __name__ == "__main__":
     summary = summarize(text)
     print(summary)
 
-file = open("<FILE PATH>","w")
-file.write(summary)
 
 

@@ -9,9 +9,9 @@ import requests
 import speech_recognition as sr
 from os import path
 from pydub import AudioSegment
-
+print('transcribing')
 # convert mp3 file to wav
-sound = AudioSegment.from_mp3("/home/aryan-khandelwal/hackathon/test1.wav")
+sound = AudioSegment.from_mp3("/home/aryan-khandelwal/Documents/hack/FINAL_RASPBERRYPI-master/test1.wav")
 sound.export("transcript.wav", format="wav")
 
 
@@ -43,7 +43,7 @@ headers = {
 
 messages = []
 
-user_question = "To this text, add punctuation and grammar such as commas and fullstops" + response
+user_question = "To this text, add punctuation and grammar such as commas and fullstops" + filez
 
 messages.append({"role": "user", "content": user_question})
 data = {
@@ -51,16 +51,18 @@ data = {
     "messages": messages
 }
 response = requests.post(endpoint, headers=headers, json=data)
-
+temp=''
 if response.status_code == 200:
     result = response.json()
     assistant_answer = result["choices"][0]["message"]["content"]
     print(assistant_answer)
+    temp=assistant_answer
     messages.append({"role": "assistant", "content": assistant_answer})
 else:
     print(f"Request failed: {response.reason}")
 
 
 fp = open('PUNC_transcript.txt', 'w')
-fp.write(assistant_answer)
+fp.write(temp)
+fp.close()
 
