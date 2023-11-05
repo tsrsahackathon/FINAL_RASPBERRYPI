@@ -1,9 +1,7 @@
-import nltk
 
 
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer
+
+
 import json
 import requests
 import speech_recognition as sr
@@ -11,7 +9,7 @@ from os import path
 from pydub import AudioSegment
 
 # convert mp3 file to wav
-sound = AudioSegment.from_mp3("/home/aryan-khandelwal/hackathon/test1.wav")
+sound = AudioSegment.from_mp3("/home/aryankhandelwal/Documents/test1.wav")
 sound.export("transcript.wav", format="wav")
 
 
@@ -63,4 +61,5 @@ else:
 
 fp = open('PUNC_transcript.txt', 'w')
 fp.write(assistant_answer)
+fp.close()
 
