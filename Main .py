@@ -1,15 +1,15 @@
 import record
 import trans2
-import summarise
+import summary
 import Keywords
 import quiz
-import MongoDB
+import mongb
 
 record
-trasn2
-summarise
+trans2
+summary
 Keywords
 quiz
-MongoDB
+mongb
 
 

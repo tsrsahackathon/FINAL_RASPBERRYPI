@@ -15,7 +15,7 @@ fb.close()
 
 messages = []
 
-user_question = "For the given text, find the main keywords and display them in the format: - **keyword** : definition \\n. The text is:" + textx
+user_question = "can you summarize the text" + textx
 
 messages.append({"role": "user", "content": user_question})
 data = {
@@ -32,6 +32,6 @@ if response.status_code == 200:
 else:
     print(f"Request failed: {response.reason}")
 
-hold = open("keywords.txt", "w")
+hold = open("summary.txt", "w")
 hold.write(assistant_answer)
 hold.close()

@@ -1,65 +1,59 @@
-
-
-
-
+import requests
+import time
 import json
-import requests
-import speech_recognition as sr
-from os import path
-from pydub import AudioSegment
+from urllib.parse import urlencode
 
-# convert mp3 file to wav
-sound = AudioSegment.from_mp3("/home/aryankhandelwal/Documents/test1.wav")
-sound.export("transcript.wav", format="wav")
+with open("test1.wav", "rb") as f:
+    text = f.read()
 
-
-# transcribe audio file
-AUDIO_FILE = "transcript.wav"
-
-# use the audio file as the audio source
-r = sr.Recognizer()
-with sr.AudioFile(AUDIO_FILE) as source:
-        audio = r.record(source)  # read the entire audio file
-
-
-
-filez = r.recognize_google(audio)
-
-
-
-
-## punctuation GPT starts
-import requests
-
-api_key = "5457D9C0W8HO2JDZW2QCRVMNBBWYTMKAR00IGWYB88VQ74SWG0TYQHJQRJZLO7FT"
-endpoint = "https://jamsapi.hackclub.dev/openai/chat/completions"
+api_key = "d595447e-4865-41de-b2f1-021378818b5b"
+pipeline = {
+    "include_empty_outputs": True,
+    "input_type": "conversation",
+    "multilingual": {
+        "enabled": True,
+        "expected_languages": ["en"]
+    },
+    "steps": [
+        {
+            "skill": "transcribe",
+            "params": {
+                "engine": "deepgram",
+                "timestamp_per_word": False,
+                "language": "en",
+            }
+        }
+    ],
+    "output_type": "json",
+    "multilingual": {
+        "enabled": True,
+        "expected_languages": ["en"]
+    },
+    "content_type": "audio/mp3"
+}
+url = "https://api.oneai.com/api/v0/pipeline/async/file?" + \
+    urlencode({"pipeline": json.dumps(pipeline)})
 
 headers = {
-    "Authorization": f"Bearer {api_key}",
-    "Content-Type": "application/json"
+    "api-key": api_key,
+    "content-type": "audio/mp3"
 }
 
-messages = []
+r = requests.post(url, text, headers=headers)
+data = r.json()
 
-user_question = "To this text, add punctuation and grammar such as commas and fullstops" + response
+get_url = f"https://api.oneai.com/api/v0/pipeline/async/tasks/{data['task_id']}"
+while (True):
+    r = requests.get(get_url, headers=headers)
+    response = r.json()
 
-messages.append({"role": "user", "content": user_question})
-data = {
-    "model": "gpt-3.5-turbo",
-    "messages": messages
-}
-response = requests.post(endpoint, headers=headers, json=data)
+    if response['status'] != "RUNNING":
+        break
 
-if response.status_code == 200:
-    result = response.json()
-    assistant_answer = result["choices"][0]["message"]["content"]
-    print(assistant_answer)
-    messages.append({"role": "assistant", "content": assistant_answer})
-else:
-    print(f"Request failed: {response.reason}")
+    time.sleep(5)
 
-
+message = response['result']['input'][0]['utterance']
+print(message)
 fp = open('PUNC_transcript.txt', 'w')
-fp.write(assistant_answer)
+fp.write(message)
 fp.close()
-
